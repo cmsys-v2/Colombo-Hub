@@ -11,11 +11,12 @@ void main() {
     );
 
     // Verify header branding
-    expect(find.text('ColomboHub Ecosystem'), findsOneWidget);
+    expect(find.text('ColomboHub'), findsOneWidget);
     expect(find.text('CH'), findsOneWidget);
+    expect(find.text('Client'), findsOneWidget);
 
     // Verify Tab labels
     expect(find.text('Stay'), findsWidgets);
-    expect(find.text('Move'), findsWidgets);
+    expect(find.text('Budget'), findsWidgets);
   });
 }
