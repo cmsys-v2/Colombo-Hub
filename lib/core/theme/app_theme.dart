@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Signature ColomboHub Palette
-  static const Color primaryTeal = Color(0xFF0D9488);
+  // Brand Color Palette
+  static const Color primaryTeal = Color(0xFF0F766E);
+  static const Color primaryTealDark = Color(0xFF115E59);
+  static const Color accentAmber = Color(0xFFD97706);
+  static const Color backgroundLight = Color(0xFFF8FAFC);
+  static const Color surfaceWhite = Colors.white;
+
+  // Extended ColomboHub Accent Palette
   static const Color darkTeal = Color(0xFF0F766E);
   static const Color lightTeal = Color(0xFFF0FDFA);
   static const Color tealBorder = Color(0xFF99F6E4);
@@ -24,72 +30,29 @@ class AppTheme {
   static const Color purpleAccent = Color(0xFF7C3AED);
   static const Color purpleLight = Color(0xFFF5F3FF);
 
-  static ThemeData get lightTheme {
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryTeal,
-        primary: primaryTeal,
-        secondary: emeraldGreen,
-        surface: slateLightBg,
-        onSurface: slateDark,
+  static ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+    scaffoldBackgroundColor: backgroundLight,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primaryTeal,
+      primary: primaryTeal,
+      secondary: accentAmber,
+      surface: surfaceWhite,
+    ),
+    fontFamily: 'Inter',
+    appBarTheme: const AppBarTheme(
+      backgroundColor: surfaceWhite,
+      elevation: 0,
+      scrolledUnderElevation: 1,
+      titleTextStyle: TextStyle(color: Color(0xFF0F172A), fontSize: 18, fontWeight: FontWeight.bold),
+    ),
+    cardTheme: CardThemeData(
+      elevation: 0.5,
+      color: surfaceWhite,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
       ),
-      scaffoldBackgroundColor: slateLightBg,
-      fontFamily: 'Roboto',
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.white,
-        foregroundColor: slateDark,
-        elevation: 0.5,
-        surfaceTintColor: Colors.transparent,
-      ),
-      cardTheme: CardThemeData(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: slateBorder, width: 1),
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryTeal,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          textStyle: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: slateDark,
-          side: const BorderSide(color: slateBorder),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          textStyle: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: slateBorder),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: slateBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: primaryTeal, width: 1.5),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      ),
-    );
-  }
+    ),
+  );
 }
