@@ -1,6 +1,5 @@
 const { onCall, onRequest, HttpsError } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
-const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const axios = require("axios");
 const crypto = require("crypto");
@@ -8,29 +7,31 @@ const crypto = require("crypto");
 admin.initializeApp();
 const db = admin.firestore();
 
-const GOOGLE_MAPS_API_KEY = defineSecret("GOOGLE_MAPS_API_KEY");
-const WHATSAPP_ACCESS_TOKEN = defineSecret("WHATSAPP_ACCESS_TOKEN");
-const WHATSAPP_PHONE_ID = defineSecret("WHATSAPP_PHONE_ID");
+// API Keys & Secrets configuration with environment fallback
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY || "";
+const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || "";
+const WHATSAPP_PHONE_ID = process.env.WHATSAPP_PHONE_ID || "";
 const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || "colombohub_secret_token_2026";
 const PAYHERE_MERCHANT_SECRET = process.env.PAYHERE_MERCHANT_SECRET || "4MTIzNDU2Nzg5MDEyMzQ1Ng==";
 
 // 1. Google Maps Distance Matrix Commute Filter
 exports.filterByCommuteTime = onCall(
-  { secrets: [GOOGLE_MAPS_API_KEY], region: "asia-south1" },
+  { region: "asia-south1" },
   async (request) => {
     const { officeLat, officeLng, maxMinutes = 30 } = request.data;
     const snap = await db.collection("accommodations").where("availability", "==", true).limit(20).get();
     
     if (snap.empty) return { suggestions: [] };
-    const origins = snap.docs.map(d => `${d.data().location.lat},${d.data().location.lng}`).join("|");
-    
+    const origins = snap.docs.map(d => `${d.data().location?.lat || d.data().latitude},${d.data().location?.lng || d.data().longitude}`).join("|");
+    const mapsKey = GOOGLE_MAPS_API_KEY || (typeof request.auth !== 'undefined' ? process.env.GOOGLE_MAPS_API_KEY : "");
+
     const res = await axios.get("https://maps.googleapis.com/maps/api/distancematrix/json", {
       params: {
         origins,
         destinations: `${officeLat},${officeLng}`,
         mode: "transit",
         departure_time: "now",
-        key: GOOGLE_MAPS_API_KEY.value(),
+        key: mapsKey,
       },
     });
 
@@ -70,7 +71,7 @@ exports.lockCorporateLunchPools = onSchedule(
 
 // 3. Meta WhatsApp Cloud API Webhook
 exports.whatsappWebhook = onRequest(
-  { secrets: [WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_ID], region: "asia-south1" },
+  { region: "asia-south1" },
   async (req, res) => {
     if (req.method === "GET") {
       const mode = req.query["hub.mode"];
