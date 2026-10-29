@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "929804451563",
+    "project_id": "cmsys-hr",
+    "storage_bucket": "cmsys-hr.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929804451563:android:b74e82dd3cde84e3d088ae",
+        "android_client_info": {
+          "package_name": "com.cmsysv2.colombohub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCjurUHO7cfFh9xX8AeA3VPqAEOv7de2o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
