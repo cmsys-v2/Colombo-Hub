@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/user_profile.dart';
-import '../models/stay_listing.dart';
-import '../models/bus_route.dart';
-import '../models/other_models.dart';
+import '../models/user_model.dart';
+import '../models/accommodation_model.dart';
+import '../models/transport_model.dart';
+import '../models/meal_pool_model.dart';
+import '../models/courier_model.dart';
+import '../models/service_provider_model.dart';
 import '../core/constants/sri_lanka_data.dart';
 
 // ==========================================
@@ -27,6 +29,8 @@ class UserStateNotifier extends StateNotifier<UserProfile> {
   void rewardScoutPoints(int points) {
     state = state.copyWith(scoutPoints: state.scoutPoints + points);
   }
+
+  void addScoutPoints(int points) => rewardScoutPoints(points);
 
   void creditPartnerWallet(double amount) {
     state = state.copyWith(partnerWallet: state.partnerWallet + amount);
@@ -62,6 +66,14 @@ enum AppTab {
   chat,
 }
 
+extension AppTabControllerExt on StateController<AppTab> {
+  void setTab(int index) {
+    if (index >= 0 && index < AppTab.values.length) {
+      state = AppTab.values[index];
+    }
+  }
+}
+
 final activeTabProvider = StateProvider<AppTab>((ref) => AppTab.stay);
 
 // ==========================================
@@ -71,6 +83,35 @@ enum MonetizationPhase {
   free, // Phase 1: 0-10k (100% Free Viral)
   ads,  // Phase 2: 10k+ (Light Native Ads)
   subs, // Phase 3: 200k+ (Pro Subscription)
+}
+
+extension MonetizationPhaseNameExt on MonetizationPhase {
+  String toUpperCase() {
+    switch (this) {
+      case MonetizationPhase.free:
+        return 'FREE BETA';
+      case MonetizationPhase.ads:
+        return 'AD SUPPORTED';
+      case MonetizationPhase.subs:
+        return 'PRO SUBSCRIPTION';
+    }
+  }
+}
+
+extension MonetizationPhaseControllerExt on StateController<MonetizationPhase> {
+  void cyclePhase() {
+    switch (state) {
+      case MonetizationPhase.free:
+        state = MonetizationPhase.ads;
+        break;
+      case MonetizationPhase.ads:
+        state = MonetizationPhase.subs;
+        break;
+      case MonetizationPhase.subs:
+        state = MonetizationPhase.free;
+        break;
+    }
+  }
 }
 
 final monetizationPhaseProvider = StateProvider<MonetizationPhase>((ref) => MonetizationPhase.free);
@@ -160,6 +201,8 @@ class BusRoutesNotifier extends StateNotifier<List<BusRoute>> {
           r
     ];
   }
+
+  void bookSeat(String routeId) => bookDailySeat(routeId);
 }
 
 final busRoutesProvider = StateNotifierProvider<BusRoutesNotifier, List<BusRoute>>((ref) {
@@ -178,29 +221,37 @@ final lunchItemsProvider = Provider<List<LunchItem>>((ref) {
 // ==========================================
 class BudgetState {
   final double salary;
-  final String strategy; // 'boarding', 'commuter', 'shared'
+  final String strategy; // 'boarding', 'commuter', 'shared', 'board_near', 'expressway_bus'
   final double utilityBill;
   final int roommates;
+  final double? customRent;
+  final double? customTransport;
+  final double? customFood;
 
   const BudgetState({
     this.salary = 180000,
     this.strategy = 'boarding',
     this.utilityBill = 16800,
     this.roommates = 3,
+    this.customRent,
+    this.customTransport,
+    this.customFood,
   });
 
   double get rent {
-    if (strategy == 'commuter') return 0;
+    if (customRent != null) return customRent!;
+    if (strategy == 'commuter' || strategy == 'expressway_bus') return 0;
     if (strategy == 'shared') return 16000;
     return 32000;
   }
 
   double get transport {
-    if (strategy == 'commuter') return 16500;
+    if (customTransport != null) return customTransport!;
+    if (strategy == 'commuter' || strategy == 'expressway_bus') return 16500;
     return 7500;
   }
 
-  double get food => 10296; // 22 days of office lunch pool
+  double get food => customFood ?? 10296; // 22 days of office lunch pool
 
   double get epf => salary * 0.08;
 
@@ -212,17 +263,36 @@ class BudgetState {
 
   double get splitShare => roommates > 0 ? (utilityBill / roommates) : utilityBill;
 
+  // Aliases for BudgetPlannerScreen
+  double get rentCost => rent;
+  double get transportCost => transport;
+  double get foodCost => food;
+  double get utilityCost => utilityBill;
+  double get epfEmployee => epf;
+  double get apitTax => tax;
+  double get totalExpenses => totalDeductions;
+  double get netSavings => netTakeHome;
+  double get totalUtilityBill => utilityBill;
+  int get roommatesCount => roommates;
+  double get perPersonShare => splitShare;
+
   BudgetState copyWith({
     double? salary,
     String? strategy,
     double? utilityBill,
     int? roommates,
+    double? customRent,
+    double? customTransport,
+    double? customFood,
   }) {
     return BudgetState(
       salary: salary ?? this.salary,
       strategy: strategy ?? this.strategy,
       utilityBill: utilityBill ?? this.utilityBill,
       roommates: roommates ?? this.roommates,
+      customRent: customRent ?? this.customRent,
+      customTransport: customTransport ?? this.customTransport,
+      customFood: customFood ?? this.customFood,
     );
   }
 }
@@ -234,6 +304,13 @@ class BudgetNotifier extends StateNotifier<BudgetState> {
   void setStrategy(String val) => state = state.copyWith(strategy: val);
   void setUtilityBill(double val) => state = state.copyWith(utilityBill: val);
   void setRoommates(int val) => state = state.copyWith(roommates: val);
+
+  void setRentCost(double val) => state = state.copyWith(customRent: val);
+  void setTransportCost(double val) => state = state.copyWith(customTransport: val);
+  void setFoodCost(double val) => state = state.copyWith(customFood: val);
+  void setUtilityCost(double val) => state = state.copyWith(utilityBill: val);
+  void setTotalUtilityBill(double val) => state = state.copyWith(utilityBill: val);
+  void setRoommatesCount(int val) => state = state.copyWith(roommates: val);
 }
 
 final budgetProvider = StateNotifierProvider<BudgetNotifier, BudgetState>((ref) {

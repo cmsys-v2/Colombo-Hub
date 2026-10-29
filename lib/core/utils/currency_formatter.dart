@@ -11,4 +11,8 @@ class CurrencyFormatter {
   static String formatInt(num amount) {
     return 'Rs. ${_lkrCompact.format(amount)}';
   }
+
+  static String formatLkr(num amount) {
+    return 'Rs. ${_lkrCompact.format(amount)}';
+  }
 }

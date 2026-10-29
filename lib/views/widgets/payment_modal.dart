@@ -17,7 +17,7 @@ class PaymentModal extends ConsumerStatefulWidget {
     required this.title,
     required this.amount,
     required this.vendorId,
-    required this.serviceType,
+    this.serviceType = 'general',
   });
 
   @override

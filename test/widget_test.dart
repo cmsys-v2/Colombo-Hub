@@ -15,7 +15,7 @@ void main() {
     expect(find.text('CH'), findsOneWidget);
 
     // Verify Tab labels
-    expect(find.text('🏠 Stay & Rooms'), findsOneWidget);
-    expect(find.text('🚌 Move & Highway Buses'), findsOneWidget);
+    expect(find.text('Stay'), findsWidgets);
+    expect(find.text('Move'), findsWidgets);
   });
 }

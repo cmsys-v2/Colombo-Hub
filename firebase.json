@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"cmsys-hr","appId":"1:929804451563:android:b74e82dd3cde84e3d088ae","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"cmsys-hr","configurations":{"android":"1:929804451563:android:b74e82dd3cde84e3d088ae","ios":"1:929804451563:ios:5572858913c533ebd088ae","web":"1:929804451563:web:d7fa62f72080b7d0d088ae"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ],
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "cmsys-hr",
+          "appId": "1:929804451563:android:b74e82dd3cde84e3d088ae",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "cmsys-hr",
+          "configurations": {
+            "android": "1:929804451563:android:b74e82dd3cde84e3d088ae",
+            "ios": "1:929804451563:ios:5572858913c533ebd088ae",
+            "web": "1:929804451563:web:d7fa62f72080b7d0d088ae"
+          }
+        }
+      }
+    }
+  }
+}
